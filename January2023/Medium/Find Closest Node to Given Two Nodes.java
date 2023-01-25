@@ -32,21 +32,54 @@ The maximum of those two distances is 2. It can be proven that we cannot get a n
 
 ******************************************************************************************************************/
 
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode(int x) { val = x; }
- * }
- */
 class Solution {
-    public void deleteNode(ListNode node) {
+    int n;
+    public void dfs(int[] edges, int node, int[] dist, boolean[] visited){
 
-        //assign node.next value to node 
-        node.val = node.next.val;
+        visited[node] = true;
+        int v = edges[node];
 
-        //traversed the node by one
-        node.next = node.next.next; 
+        if(v != -1 && !visited[v]){
+
+            visited[v] = true;
+            dist[v] = 1 + dist[node];
+            dfs(edges,v,dist,visited);
+        }
+    }
+    public int closestMeetingNode(int[] edges, int node1, int node2) {
+
+        n = edges.length;
+
+        int[] dist1 = new int[n];
+        int[] dist2 = new int[n];
+
+        Arrays.fill(dist1, Integer.MAX_VALUE);
+        Arrays.fill(dist2, Integer.MAX_VALUE);
+
+        boolean[] visited1 = new boolean[n];
+        boolean[] visited2 = new boolean[n];
+        
+        dist1[node1] = 0;
+        dist2[node2] = 0;
+        
+        dfs(edges, node1, dist1, visited1);
+        dfs(edges, node2, dist2, visited2);
+        
+        int minDistanceNode = -1;
+        int minDistanceTillNow = Integer.MAX_VALUE;
+        
+        for(int i = 0 ; i < n; i++){
+
+            int maxD = Math.max(dist1[i], dist2[i]);
+
+            if(minDistanceTillNow > maxD){
+                
+                minDistanceTillNow = maxD;
+                minDistanceNode = i;
+            }
+        }
+        
+      return minDistanceNode;  
     }
 }
+
